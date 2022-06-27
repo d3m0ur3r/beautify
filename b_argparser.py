@@ -30,7 +30,7 @@ def arg_parser() -> argparse.Namespace:
 ║                                                                                       ║
 ╚═══════════════════════════════════════════════════════════════════════════════════════╝
 """,
-                                     usage=f"{prog_name} [options] -u [user] -r [remote path] -l [local path]",
+                                     usage=f"{prog_name}",
                                      prefix_chars="-",
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
 
@@ -44,6 +44,10 @@ def arg_parser() -> argparse.Namespace:
     parser.add_argument('-e', '--echo',
                         action='store_true',
                         help='Echo to screen without doing any changes.')
+
+    parser.add_argument('-c', '--show-change',
+                        action='store_true',
+                        help='Shows actual changes.')
 
     parser.add_argument('--debug',
                         action='store_true',
