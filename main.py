@@ -41,8 +41,15 @@ def read_file(file: str) -> list:
                 # space_count_after = 0
                 space_count_after -= 1
 
-                front = LINE_DESIGN * ((((MAX_LINE_LENGTH - 4) + space_count_after - space_count_before) - text_len) // 2)
-                back = LINE_DESIGN * ((((MAX_LINE_LENGTH - 4) - space_count_after - space_count_before) - text_len) // 2)
+                if space_count_after % 2 != 0:
+                    spacer = 1
+                else:
+                    spacer = 0
+
+                front = LINE_DESIGN * (
+                            (((MAX_LINE_LENGTH - 4) + space_count_after - space_count_before) - text_len) // 2)
+                back = LINE_DESIGN * (
+                            (((MAX_LINE_LENGTH - 4) - space_count_after - space_count_before) - spacer - text_len) // 2)
 
                 if text_len % 2 != 0:
                     back += LINE_DESIGN
