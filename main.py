@@ -7,10 +7,12 @@ from debugger import debugger
 # [const]
 MAX_LINE_LENGTH = 120
 LINE_DESIGN = '═'
+
+
 # [end]
 
 
-def read_file(file):
+def read_file(file: str) -> list:
     """Test"""
     # ╔═════════════════╗
     # ║  [ READ FILE ]  ║
@@ -21,30 +23,37 @@ def read_file(file):
     for idx, line in enumerate(lines):
 
         if line:
+
             try:
+                space_count_before: str = re.search(r'^\s+#', line).group()
+                space_count_before: int = space_count_before.count(' ')
+            except AttributeError:
+                space_count_before: int = 0
 
-                space_count = re.search(r'^(\s+)?#(\s\[\w+])$', line).group().count(' ')
-
-                line = re.search(r'\w+', line).group()
-
-                text = f'[ {line} ]'.upper() if line != 'end' else LINE_DESIGN
+            try:
+                space_count_after = re.search(r'#\s(\[[\w\s]+])$', line).group()
+                space_count_after = space_count_after.count(' ')
+                print(line, space_count_after)
+                line = re.findall(r'\w+', line)
+                line = " ".join(line)
+                text = f'[ {line} ]'.title() if line != 'end' else LINE_DESIGN
                 text_len = len(text)
-                # space_count = 0
-                space_count -= 1
+                # space_count_after = 0
+                space_count_after -= 1
 
-                front = LINE_DESIGN * ((((MAX_LINE_LENGTH - 4) - space_count) - text_len) // 2)
-                back = LINE_DESIGN * ((((MAX_LINE_LENGTH - 4) - space_count) - text_len) // 2)
+                front = LINE_DESIGN * ((((MAX_LINE_LENGTH - 4) + space_count_after - space_count_before) - text_len) // 2)
+                back = LINE_DESIGN * ((((MAX_LINE_LENGTH - 4) - space_count_after - space_count_before) - text_len) // 2)
 
                 if text_len % 2 != 0:
                     back += LINE_DESIGN
 
-                lines[idx] = '{0}# {1}{2}{3} #\n'.format(space_count * ' ',
+                lines[idx] = '{0}# {1}{2}{3} #\n'.format(space_count_before * ' ',
                                                          front,
                                                          text, back)
 
-                print(f"{idx=} {line=}")
-                print(lines[idx])
-            except AttributeError as e:
+                # print(f"{idx=} {line=}")
+                # print(lines[idx])
+            except AttributeError:
                 pass
 
     return lines
@@ -53,24 +62,27 @@ def read_file(file):
 def main() -> int:
     args = arg_parser()
 
-    file_path = args.file
-    echo = args.echo
-    changes = args.show_change
+    file_path: str = args.file
+    echo: bool = args.echo
+    do_change: bool = args.do_change
+
     if args.debug:
         debugger([f'Filepath:    {file_path}',
                   f'Echo:        {echo}',
-                  f'Show_change: {changes}'])
+                  f'Show_change: {do_change}'])
         raise SystemExit(0)
 
-    file = read_file(file_path)
-    master_string = ""
-    for x in file:
-        master_string += x
-    if echo:
-        print(master_string)
+    file: list = read_file(file_path)
+    master_string: str = ''.join(file)
+    highlighted_list = ''.join([f'\x1b[1;37;100m{i:0>2}:\x1b[0m {f}' for i, f in enumerate(file, 1)])
 
-    # with open(file_path, 'w', encoding='utf-8') as f:
-    #     f.writelines(master_string)
+    if echo and do_change:
+        print(highlighted_list)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.writelines(master_string)
+    elif echo:
+        print(highlighted_list)
+
     return 0
 
 

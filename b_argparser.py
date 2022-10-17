@@ -21,9 +21,13 @@ def arg_parser() -> argparse.Namespace:
     prog_name = sys.argv[0]
     parser = argparse.ArgumentParser(prog=prog_name,
                                      epilog=r"""
- *   
- ** 
- ***
+Usage:
+Edit your script like so:
+
+ # [Your text reference]
+<Your code here>
+ # [end]
+
 ╔══════════════════════════════════════[ Examples ]═════════════════════════════════════╗                                         
 ║  -f ~/my_file.py                                                                      ║
 ║  -e -f C:\Users\MyUser\my_file.py                                                     ║
@@ -43,11 +47,12 @@ def arg_parser() -> argparse.Namespace:
 
     parser.add_argument('-e', '--echo',
                         action='store_true',
+                        default=True,
                         help='Echo to screen without doing any changes.')
 
-    parser.add_argument('-c', '--show-change',
+    parser.add_argument('-d', '--do-change',
                         action='store_true',
-                        help='Shows actual changes.')
+                        help='Does change.')
 
     parser.add_argument('--debug',
                         action='store_true',
